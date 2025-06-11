@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAYJA - Make Every Bet a WAYJA</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Replace this URL with your Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz24Hn89e3KXYnZuLgQrkyNUbcPAYDBxyw5SlCdLJbBUPVUwWhpue3eO231mT7TNIkG/exec';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const desktopForm = document.getElementById('desktop-form');
+            const mobileForm = document.getElementById('mobile-form');
+            
+            if (desktopForm) {
+                desktopForm.addEventListener('submit', handleSubmit);
+            }
+            if (mobileForm) {
+                mobileForm.addEventListener('submit', handleSubmit);
+            }
+        });
+        
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const email = form.email.value;
+            const button = form.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            
+            // Show loading state
+            button.textContent = 'SUBMITTING...';
+            button.disabled = true;
+            
+            try {
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('source', 'Landing Page');
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+                
+                // With no-cors, we can't read the response, so assume success
+                showMessage('Thank you! We\'ll keep you updated.', 'success');
+                form.reset();
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            }
+            
+            // Reset button
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+        
+        function showMessage(message, type) {
+            // Remove existing message
+            const existingMessage = document.querySelector('.form-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `form-message ${type}`;
+            messageDiv.textContent = message;
+            
+            // Add to form
+            const activeForm = document.querySelector('form:hover') || document.querySelector('#desktop-form') || document.querySelector('#mobile-form');
+            if (activeForm) {
+                activeForm.appendChild(messageDiv);
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 5000);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="Wayja%20Logo.png" alt="WAYJA Logo" />
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="hero-text">
+                <h1>MAKE EVERY<br>BET A <span class="highlight">WAYJA</span></h1>
+                <p>Bring your sports rivalries to life<br>with friendly, no-risk bets.</p>
+            </div>
+
+            <!-- Desktop Form -->
+            <div class="signup-form desktop-form">
+                <div class="form-header">
+                    <div class="form-logo">
+                        <img src="Wayja%20Logo.png" alt="WAYJA Logo" />
+                    </div>
+                    <h2>REGISTER YOUR INTEREST</h2>
+                </div>
+                <form class="email-form" id="desktop-form">
+                    <input type="email" name="email" placeholder="EMAIL ADDRESS" required>
+                    <button type="submit">WAYJA</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Mobile Form Overlay -->
+        <div class="mobile-form-overlay">
+            <div class="mobile-form">
+                <h2>REGISTER YOUR INTEREST</h2>
+                <form class="email-form" id="mobile-form">
+                    <input type="email" name="email" placeholder="EMAIL" required>
+                    <button type="submit">WAYJA</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Background Image -->
+        <div class="background-image"></div>
+    </div>
+</body>
+</html> 
